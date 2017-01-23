@@ -16,8 +16,10 @@ class Supervisor_Manager(object):
 	def __init__(self, subject):
 		self.subject = subject
 		self.database = [['problem', database.get_word_dict('articles')]] #'''subject title, dictionary for this subject'''
+		print(self.database)
 		self.subject_vectors = []
 		self.synonym_dict = database.get_word_dict('synonyms', True)
+		self.synonym_dict[0] = []
 		self.crawl_url_list = []
 
 	def get_vector(self, url, thread_name):
@@ -38,31 +40,24 @@ class Supervisor_Manager(object):
 				subject_dict = {}
 
 		subject_dict = functions.word_vector(self.get_vector(url, thread_name), subject_dict, 1)
-		'''for ID, i in enumerate(self.database):
-			print(i[0])
 
-			if i[0] == self.subject:
-				print('true')
-				self.database[ID] = [self.subject, subject_dict]
-			elif i == self.database[-1]:
-				print("false")
-				self.database.append([self.subject, subject_dict])
-			else:
-				continue'''
 		self.subject_vectors.append([self.subject, subject_dict])
 
 	def update_database(self):
 
-		subject_dict = {}
+		subject_dict = {0:0}
 		length = len(self.subject_vectors)
-		for i in range(0,length-1):
+		print(length)
+		for i in range(0,length):
 			m = self.subject_vectors[i]
-			for j in range(i+1, length):
+			for j in range(i, length):
 				j = self.subject_vectors[j]
 				if m[0] == j[0]:
 					for l in m[1]:
 						synonims = False
 						for k in j[1]:
+							print(l)
+							print(k)
 							if l == k:
 								synonims = True
 								if l in subject_dict:
@@ -83,10 +78,7 @@ class Supervisor_Manager(object):
 								subject_dict[k] += j[1][k]
 							else:
 								subject_dict[k] = j[1][k]
-
-		print(subject_dict)
-		print("")
-		print(sorted(self.synonym_dict))
+		
 
 		for i in subject_dict:
 			for j in subject_dict:
@@ -96,10 +88,13 @@ class Supervisor_Manager(object):
 						subject_dict[j] = 0.0
 						break
 
+
 		cleared_subject_dict = {}
 		for i in subject_dict:
 			if subject_dict[i] != 0.0:
 				cleared_subject_dict[i] = subject_dict[i]
+
+		print(subject_dict)
 
 		#normalize
 		total = 0.0
@@ -116,7 +111,7 @@ class Supervisor_Manager(object):
 			elif i == self.database[-1]:
 				self.database.append([self.subject, cleared_subject_dict]) #normalized_dict])
 
-		print(database)
+		#print("The finished database: {}".format(self.database))
 
 	def add_urls(self, url_database, urls_scrape):
 		for i in urls_scrape:
@@ -191,6 +186,7 @@ for i in urls:
 
 	database.add_word_dict('synonyms', sup.synonym_dict)
 
+print("The elements that are to be updated: {}".format(sup.database))
 database.add_word_dict('articles', sup.database[-1][-1])
 
 '''set_url = set()

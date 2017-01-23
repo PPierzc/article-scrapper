@@ -73,9 +73,5 @@ def get_max(n):
 		print("")
 		word_dict[max_value[0]] = 0
 
-#get_max(5)
-#print(word_dict)
-#add_word_dict('synonyms', {'halo': ['hej', 'ho']})
-
-for i in cursor.execute('''SELECT * FROM 'synonyms' '''):
-	print(i)
+#add_word_dict('articles', {0:[0]})
+show_table('articles')
